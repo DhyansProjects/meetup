@@ -1,0 +1,63 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Eugene Pestov
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: userName
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: userFullName
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+
+        - createIndex:
+             indexName: IDX_USERS_01
+             tableName: users
+             unique: true
+             columns:
+              - column:
+                  name: userName
+
+        - createTable:
+            tableName: connections
+            columns:
+              - column:
+                  name: userId
+                  type: int
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: friendId
+                  type: int
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseColumnNames: userId
+            baseTableName: connections
+            constraintName: FK_CONNECTIONS_USERS_01
+            referencedColumnNames: id
+            referencedTableName: users
+
+        - addForeignKeyConstraint:
+            baseColumnNames: friendId
+            baseTableName: connections
+            constraintName: FK_CONNECTIONS_USERS_02
+            referencedColumnNames: id
+            referencedTableName: users

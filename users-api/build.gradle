@@ -1,0 +1,51 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.yaml:snakeyaml:1.16'
+        classpath 'se.transmode.gradle:gradle-docker:1.2'
+    }
+}
+
+description = 'Page and Connections API'
+
+apply plugin: 'spring-boot'
+apply plugin: 'groovy'
+
+dependencies {
+    compile project(':core')
+
+    compile 'org.springframework:spring-jms'
+    compile 'org.apache.activemq:activemq-broker'
+    compile 'com.fasterxml.jackson.core:jackson-databind'
+    compile 'org.springframework.boot:spring-boot-starter-web', {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
+    }
+    compile 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+    compile 'org.springframework.hateoas:spring-hateoas:0.19.0.RELEASE'
+
+    runtime 'org.springframework.boot:spring-boot-starter-jetty'
+
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    testCompile 'guru.nidi.raml:raml-tester'
+    testCompile 'javax.servlet:javax.servlet-api'
+    testCompile 'javax.ws.rs:javax.ws.rs-api' // required but not provided by raml-tester
+    testCompile 'com.jayway.jsonpath:json-path'
+    testCompile 'org.spockframework:spock-spring'
+}
+
+apply plugin: 'docker'
+
+docker {
+    baseImage = 'java:8'
+}
+
+task buildDocker(type: Docker, dependsOn: build) {
+    exposePort 8080
+    setEnvironment 'JAVA_OPTS', '-Dspring.profiles.active=docker'
+    addFile jar.archivePath, jar.archiveName
+    entryPoint(["java", "-jar", jar.archiveName])
+}
+

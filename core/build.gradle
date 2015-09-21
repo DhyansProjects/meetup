@@ -1,0 +1,11 @@
+description = 'Meetup service core components'
+
+dependencies {
+    compile 'org.springframework:spring-context'
+    compile 'org.springframework:spring-beans'
+    compile 'org.springframework:spring-jms'
+    compile 'javax.jms:jms-api:1.1-rev-1'
+    compile 'org.elasticsearch:elasticsearch'
+    compile 'com.fasterxml.jackson.core:jackson-databind'
+    compile 'com.google.guava:guava'
+}

@@ -1,0 +1,278 @@
+#%RAML 0.8
+---
+title: MeetUp API
+version: v1
+protocols: [ HTTP ]
+
+documentation:
+  - title: User Connections REST API Specification
+    content: |
+      Welcome to the _MeetUp API_ Documentation. The _API_ allows you to get
+      information on user's connections and make new connections
+
+schemas:
+  - userTemplate: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "/",
+        "type": "object",
+        "properties": {
+          "userName": {
+            "id": "userName",
+            "type": "string"
+          },
+          "userFullName": {
+            "id": "userFullName",
+            "type": "string"
+          }
+        },
+        "required": [
+          "userName",
+          "userFullName"
+        ]
+      }
+    userConnectionRequest: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "/",
+        "type": "object",
+        "properties": {
+          "userName": {
+            "id": "userName",
+            "type": "string"
+          }
+        },
+        "required": [
+          "userName"
+        ]
+      }
+    userList: |
+      {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "id": "/",
+        "type": "object",
+        "properties": {
+          "links": {
+            "id": "links",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "rel": {
+                  "id": "rel",
+                  "type": "string"
+                },
+                "href": {
+                  "id": "href",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "content": {
+            "id": "content",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "userName": {
+                  "id": "userName",
+                  "type": "string"
+                },
+                "userFullName": {
+                  "id": "userFullName",
+                  "type": "string"
+                },
+                "friends": {
+                  "id": "friends",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "links": {
+                  "id": "links",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "rel": {
+                        "id": "rel",
+                        "type": "string"
+                      },
+                      "href": {
+                        "id": "href",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "page": {
+            "id": "page",
+            "type": "object",
+            "properties": {
+              "size": {
+                "id": "size",
+                "type": "integer"
+              },
+              "totalElements": {
+                "id": "totalElements",
+                "type": "integer"
+              },
+              "totalPages": {
+                "id": "totalPages",
+                "type": "integer"
+              },
+              "number": {
+                "id": "number",
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "required": [
+          "links",
+          "content",
+          "page"
+        ]
+      }
+traits:
+  - paged:
+      queryParameters:
+        size:
+          displayName: Page Size
+          type: number
+          description: |
+            Page size. Defines the number of results on a page. The default page size is 20.
+          example: 10
+          required: false
+        page:
+          displayName: Page number
+          type: number
+          description: |
+            The page number to display. The default is 0.
+          example: 2
+          required: false
+  - sorted:
+      queryParameters:
+        sort:
+          displayName: Sorting directives
+          description: List of fields and (optional) orders
+          type: string
+          example: userFullName,desc,userName
+          required: false
+
+/users:
+  displayName: Registered users
+  description: Registered users resource
+  get:
+    is: [ paged, sorted ]
+    description: |
+      returns the list of registered users.
+    responses:
+      200:
+        description: normal result
+        body:
+          application/json:
+            schema: userList
+            example: |
+              {
+                "links": [
+                  {
+                    "rel": "self",
+                    "href": "http://192.168.99.100:8080/users"
+                  }
+                ],
+                "content": [
+                  {
+                    "userName": "bonny",
+                    "userFullName": "Bonny Nord",
+                    "friends": [],
+                    "links": []
+                  },
+                  {
+                    "userName": "eupestov",
+                    "userFullName": "Eugene Pestov",
+                    "friends": [],
+                    "links": []
+                  }
+                ],
+                "page": {
+                  "size": 20,
+                  "totalElements": 2,
+                  "totalPages": 1,
+                  "number": 0
+                }
+              }
+  post:
+    description: Send a request for connection with the given user
+    body:
+      application/json:
+        schema: userTemplate
+        example: |
+          {
+            "userName": "eupestov",
+            "userFullName": "Eugene Pestov"
+          }
+    responses:
+      204:
+        description: User created
+
+  /{userName}/connections:
+    displayName: User's connections
+    description: User's connections sub-resource
+    uriParameters:
+      userName:
+        displayName: User name
+        description: Unique user name
+        type: string
+        minLength: 6
+        example: eupestov
+    get:
+      is: [ paged, sorted ]
+      description: Returns the list of user's connections
+      responses:
+        200:
+          description: normal response
+          body:
+            application/json:
+              schema: userList
+              example: |
+                {
+                  "links": [
+                    {
+                      "rel": "self",
+                      "href": "http://192.168.99.100:8080/users"
+                    }
+                  ],
+                  "content": [
+                    {
+                      "userName": "bonny",
+                      "userFullName": "Bonny Nord",
+                      "friends": ["eupestov"],
+                      "links": []
+                    }
+                  ],
+                  "page": {
+                    "size": 20,
+                    "totalElements": 1,
+                    "totalPages": 1,
+                    "number": 0
+                  }
+                }
+
+    post:
+      description: Create a connection with the given user
+      body:
+        application/json:
+          schema: userConnectionRequest
+          example: |
+            {
+              "userName": "eupestov"
+            }
+      responses:
+        204:
+          description: Connection request submitted

@@ -1,0 +1,22 @@
+spring:
+  jms: # enable pub/sub
+    pubSubDomain: false
+
+  activemq: # use dockered ActiveMQ
+    broker-url: tcp://192.168.99.100:61616
+    user: admin
+    password: admin
+
+  jackson:
+    serialization-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+
+---
+spring:
+  profiles: docker
+
+spring.activemq: # use dockered ActiveMQ
+  broker-url: tcp://activemq:61616
+  user: admin
+  password: admin

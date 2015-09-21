@@ -1,0 +1,6 @@
+rootProject.name = 'meetup'
+
+include 'users-api'
+include 'core'
+include 'users-handler'
+

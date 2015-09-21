@@ -15,11 +15,11 @@ Install Docker Machine and Compose: http://docs.docker.com/machine/install-machi
 
 ## Build and Run
 
-> git clone
+> git clone https://github.com/benzohub/meetup.git
 
 > cd meetup
 
-> ./gradle buildDocker
+> ./gradlew buildDocker
 
 > ./runall
 

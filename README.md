@@ -31,9 +31,9 @@ Visit the following urls:
 
 `http://192.168.99.100:8161/admin/queues.jsp` - ActiveMQ Admin page listing queues
 
-`192.168.99.100` is the default IP of the docker VM. It can be retrieved by calling
+`192.168.99.100` is the default IP of the docker VM. It can be retrieved by calling:
 
-docker-machine ip default
+> docker-machine ip default
 
 ### Create new user
 
@@ -57,3 +57,7 @@ curl -XPOST 'http://192.168.99.100:8080/users/eupestov/connections' -H 'Content-
 '
 
 The API Specification is available in docs/api in RAML format.
+
+## UI
+
+After the services started successfully you can run the simplistic UI as described in ui/README.md

@@ -1,8 +1,14 @@
 #%RAML 0.8
 ---
 title: MeetUp API
+baseUri: http://{hostname}
 version: v1
 protocols: [ HTTP ]
+baseUriParameters:
+  hostname:
+    description: hostname and optional port where the API is deployed
+    type: string
+    default: localhost:8080
 
 documentation:
   - title: User Connections REST API Specification

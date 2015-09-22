@@ -27,3 +27,7 @@ gradle-app.setting
 
 # Ignore Elasticsearch files
 **/data/
+
+# Ignore UI installable modules
+ui/node_modules
+ui/app/bower_components

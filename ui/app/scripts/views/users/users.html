@@ -1,0 +1,8 @@
+<h2>User list (page {{page.number + 1}} of {{page.totalPages}})</h2>
+<ul>
+    <li ng-repeat="user in users">
+        <span>{{user.userName}}</span>
+        <p>Full name: {{user.userFullName}}</p>
+        <p>Friends: {{user.friends}}</p>
+    </li>
+</ul>

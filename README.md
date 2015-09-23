@@ -1,6 +1,9 @@
 # Meetup Micro-services
 
-The project explores micro-service oriented application design with use of CQRS principle.
+The project explores micro-service oriented application design with use of CQRS principle:
+
+![CQRS](docs/img/cqrs.png "CQRS")
+
 It consists of two services:
 
 - users-api - provides REST API to clients and implements the Query part of CQRS.

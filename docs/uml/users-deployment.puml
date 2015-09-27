@@ -1,0 +1,55 @@
+@startuml
+
+() "/api/users" as RestApi
+RestApi -- [api-gateway]
+
+note left of [api-gateway]
+    - request load balancing
+    - security context injection
+    - api versioning
+end note
+
+node api-node-1 {
+    () "/users" as RestApi1
+    component "users-api" as UsersApi1
+    RestApi1 -- UsersApi1
+    [api-gateway] ..> RestApi1
+}
+
+node api-node-n {
+    () "/users" as RestApiN
+    component "users-api" as UsersApiN
+    RestApiN -- UsersApiN
+    [api-gateway] ..> RestApiN
+}
+
+node handler-node-1 {
+    component "users-handler" as UsersHandler
+}
+
+database "Users Store" as UsersStore
+cloud "Users Projection Store" as UsersProjectionStore <<ElasticSearch cluster>>
+cloud "Event Bus" as EventBus <<ActiveMQ>>
+
+UsersApi1 --> UsersProjectionStore
+UsersApiN --> UsersProjectionStore
+UsersHandler --> UsersStore
+UsersHandler .u.> EventBus
+UsersApi1 .d.> EventBus
+UsersApiN .d.> EventBus
+
+[User Interface] ..( RestApi
+
+note right of UsersStore
+    Transactional, persistent
+    storage of user information
+end note
+
+note left of UsersProjectionStore
+    Fast, query optimized store of
+    user information. At any moment
+    can be re-constructed from the
+    Users Store
+end note
+
+@enduml

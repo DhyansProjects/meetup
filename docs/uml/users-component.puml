@@ -1,0 +1,22 @@
+@startuml
+
+() "/users\n/users/{name}/connections" as RestApi
+() "queue:CreateUser" as CreateUserCommand
+() "queue:CreateConnectionRequest" as CreateConnectionRequestCommand
+() "topic:UserCreated" as UserCreatedEvent
+RestApi -- [users-api] <<service>>
+CreateUserCommand -- [users-handler] <<service>>
+CreateConnectionRequestCommand -- [users-handler]
+UserCreatedEvent -- [users-handler]
+
+database "Users Store" as UsersStore
+database "Users Projection Store" as UsersProjectionStore
+
+[users-api] -> UsersProjectionStore <<ElasticSearch>>
+[users-handler] --> UsersStore
+
+[User Interface] ..> RestApi
+[users-api] ..> CreateUserCommand : submits
+[users-api] ..> CreateConnectionRequestCommand : submits
+[users-api] ..> UserCreatedEvent : listens to
+@enduml
